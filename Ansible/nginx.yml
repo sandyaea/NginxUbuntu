@@ -1,0 +1,44 @@
+#!/usr/bin/env ansible-playbook
+---
+- name: Test Clients
+  hosts: ubuntu_servers
+  become: yes
+
+  tasks:
+
+  - name: Ping test
+    ping:
+
+  - name: Install latest version of Nginx
+    apt:
+      name: nginx
+      state: latest
+      update_cache: yes
+
+  - name: Remove default web page
+    file: path='/var/www/html/index.nginx-debian.html' state=absent
+
+  - name: Download new home page
+    get_url:
+      url: https://raw.githubusercontent.com/sandyaea/NginxUbuntu/main/index.html
+      dest: /var/www/index.html
+      mode: '0644'
+      owner: root
+      group: root
+
+  - name: Download Nginx config file
+    get_url:
+      url: https://raw.githubusercontent.com/sandyaea/NginxUbuntu/main/NginxDefaultBlock.conf
+      dest: /etc/nginx/sites-available/default
+      mode: '0644'
+      owner: root
+      group: root
+
+  - name: Reload Nginx config
+    service: name=nginx state=reloaded
+
+  - name: Install Z Shell
+    apt:
+      name: zsh
+      state: latest
+      update_cache: yes
