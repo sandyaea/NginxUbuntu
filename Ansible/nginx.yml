@@ -42,3 +42,14 @@
       name: zsh
       state: latest
       update_cache: yes
+
+  - name: Download Sysctl config file
+    get_url:
+      url: https://raw.githubusercontent.com/sandyaea/NginxUbuntu/main/15-NginxUbuntu.conf
+      dest: /etc/sysctl.d/15-NginxUbuntu.conf
+      mode: '0644'
+      owner: root
+      group: root
+
+  - name: Apply new Sysctl config file
+    service: name=procps state=reloaded
